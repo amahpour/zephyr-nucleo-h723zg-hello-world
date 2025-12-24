@@ -48,6 +48,42 @@ cd ~/zephyrproject/zephyr
 west sdk install -t arm-zephyr-eabi
 ```
 
+## Docker Validation
+
+Validate the entire workflow (up to build) in a Docker container:
+
+### Build Docker Image
+
+```bash
+docker build -t zephyr-test .
+```
+
+### Run Validation
+
+The validation script will automatically:
+1. Create Python virtual environment
+2. Initialize Zephyr workspace
+3. Fetch Zephyr and required libraries
+4. Export Zephyr CMake package
+5. Install Python dependencies
+6. Install ARM toolchain
+7. Build the project
+
+```bash
+docker run --rm zephyr-test
+```
+
+### Interactive Mode
+
+To run the validation script interactively or debug:
+
+```bash
+docker run -it --rm zephyr-test /bin/bash
+# Then run: /workspace/validate.sh
+```
+
+**Note:** The Docker validation only covers the build process. Flashing requires physical hardware access and is not included in the containerized workflow.
+
 ## Build and Flash
 
 ```bash
@@ -64,4 +100,20 @@ west flash
 Connect via serial terminal (115200 baud) to see:
 - LED blinks every 500ms
 - Type characters to see "You pressed: X"
+
+## Serial Terminal Testing
+
+Connect to the device serial port:
+
+```bash
+screen /dev/ttyACM0 115200
+```
+
+**Expected behavior:**
+- LED blinks every 500ms (visual check)
+- Typing characters displays "You pressed: X" for each character
+
+**Exit screen:** Press `Ctrl+A` then `K`, confirm with `Y`
+
+**Note:** If `/dev/ttyACM0` doesn't exist, check available ports with `ls /dev/ttyACM*` or `ls /dev/ttyUSB*`
 

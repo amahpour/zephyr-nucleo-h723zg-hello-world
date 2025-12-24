@@ -1,0 +1,11 @@
+.git
+.gitignore
+*.md
+!README.md
+build
+.vscode
+*.swp
+*.swo
+*~
+*.log
+
