@@ -48,6 +48,14 @@ cd ~/zephyrproject/zephyr
 west sdk install -t arm-zephyr-eabi
 ```
 
+### 7. Install OpenOCD (for flashing)
+
+OpenOCD is required for flashing the device. Alternatively, you can use STM32CubeProgrammer from STM32CubeIDE.
+
+```bash
+sudo apt install openocd
+```
+
 ## Docker Validation
 
 Validate the entire workflow (up to build) in a Docker container:
@@ -92,8 +100,10 @@ export ZEPHYR_BASE=~/zephyrproject/zephyr
 
 cd ~/code/zephyr-nucleo-h723zg-hello-world
 west build -b nucleo_h723zg . --pristine
-west flash
+west flash --runner openocd
 ```
+
+**Note:** The `--runner openocd` flag uses OpenOCD for flashing (recommended). If you have STM32CubeProgrammer installed, you can use `west flash` without the runner flag, but OpenOCD is the preferred method for Nucleo boards.
 
 ## Usage
 
