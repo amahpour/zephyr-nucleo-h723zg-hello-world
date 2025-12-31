@@ -1,0 +1,57 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build native_sim (debug)",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "source ~/zephyrproject/.venv/bin/activate && export ZEPHYR_BASE=~/zephyrproject/zephyr && west build -b native_sim . --pristine -- -DCONFIG_NO_OPTIMIZATIONS=y"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Build native_sim with debug symbols (no optimizations)"
+        },
+        {
+            "label": "Build native_sim",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "source ~/zephyrproject/.venv/bin/activate && export ZEPHYR_BASE=~/zephyrproject/zephyr && west build -b native_sim . --pristine"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "detail": "Build native_sim (optimized)"
+        },
+        {
+            "label": "Build nucleo_h723zg",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "source ~/zephyrproject/.venv/bin/activate && export ZEPHYR_BASE=~/zephyrproject/zephyr && west build -b nucleo_h723zg . --pristine"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "detail": "Build for Nucleo H723ZG hardware"
+        },
+        {
+            "label": "Flash nucleo_h723zg",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "-c",
+                "source ~/zephyrproject/.venv/bin/activate && export ZEPHYR_BASE=~/zephyrproject/zephyr && west flash --runner openocd"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Flash to Nucleo H723ZG via OpenOCD"
+        }
+    ]
+}
+
