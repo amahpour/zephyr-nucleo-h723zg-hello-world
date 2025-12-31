@@ -23,9 +23,16 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/gpio/gpio_emul.h>
 
-void sys_trace_gpio_port_toggle_bits_exit_user(const struct device *port, int ret)
+void sys_trace_gpio_port_set_bits_raw_exit_user(const struct device *port, int ret)
 {
-    /* Read actual LED state after toggle using GPIO emulator API */
+    /* Called when setting GPIO high */
+    int state = gpio_emul_output_get(port, 0);
+    printk("[DEBUG] (GPIO) LED state: %s\n", state ? "ON" : "OFF");
+}
+
+void sys_trace_gpio_port_clear_bits_raw_exit_user(const struct device *port, int ret)
+{
+    /* Called when setting GPIO low */
     int state = gpio_emul_output_get(port, 0);
     printk("[DEBUG] (GPIO) LED state: %s\n", state ? "ON" : "OFF");
 }
