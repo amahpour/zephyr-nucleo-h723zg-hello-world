@@ -205,6 +205,15 @@ Since native_sim compiles to a native Linux executable, you can debug `main.c` d
      ./build/zephyr/zephyr.exe
    ```
 
+5. **VS Code Debugging:**
+   
+   The `.vscode/launch.json` and `.vscode/tasks.json` files are pre-configured for debugging:
+   - Press `F5` to build (with debug symbols) and launch the debugger
+   - Set breakpoints in `src/main.c` or `src/trace_hooks.c` by clicking the gutter
+   - Use the Debug panel to inspect variables like `led` and `state`
+   
+   **Requires:** [C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) for VS Code.
+
 ## Usage
 
 Connect via serial terminal (115200 baud) to see:
