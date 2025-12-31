@@ -6,7 +6,6 @@ build/
 *.map
 
 # IDE files
-.vscode/
 .idea/
 *.swp
 *.swo

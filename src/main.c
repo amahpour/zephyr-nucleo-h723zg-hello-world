@@ -19,17 +19,18 @@ int main(void) {
         return -1;
     }
     gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-    
+
     if (!device_is_ready(uart)) {
         return -1;
     }
     uart_irq_callback_set(uart, uart_cb);
     uart_irq_rx_enable(uart);
-    
+
+    int led_state = 0;
     while (1) {
-        gpio_pin_toggle_dt(&led);
+        led_state = !led_state;
+        gpio_pin_set_dt(&led, led_state);
         k_msleep(500);
     }
     return 0;
 }
-
