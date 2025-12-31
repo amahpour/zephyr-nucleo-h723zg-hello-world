@@ -94,6 +94,8 @@ docker run -it --rm zephyr-test /bin/bash
 
 ## Build and Flash
 
+### Hardware Target (Nucleo H723ZG)
+
 ```bash
 source ~/zephyrproject/.venv/bin/activate
 export ZEPHYR_BASE=~/zephyrproject/zephyr
@@ -104,6 +106,51 @@ west flash --runner openocd
 ```
 
 **Note:** The `--runner openocd` flag uses OpenOCD for flashing (recommended). If you have STM32CubeProgrammer installed, you can use `west flash` without the runner flag, but OpenOCD is the preferred method for Nucleo boards.
+
+### Simulator Target (Native Sim)
+
+Build and run on native simulator (runs natively on your host):
+
+```bash
+source ~/zephyrproject/.venv/bin/activate
+export ZEPHYR_BASE=~/zephyrproject/zephyr
+
+cd ~/code/zephyr-nucleo-h723zg-hello-world
+west build -b native_sim . --pristine
+west build -t run
+```
+
+**Expected output:**
+```
+uart connected to pseudotty: /dev/pts/X
+*** Booting Zephyr OS build vX.X.X ***
+```
+
+**Testing UART Echo via PTY:**
+
+The native simulator creates a pseudotty (PTY) for UART communication. To test:
+
+1. **Terminal 1** - Run the simulator:
+   ```bash
+   west build -t run
+   # Note the PTY device shown (e.g., /dev/pts/5)
+   ```
+
+2. **Terminal 2** - Connect to the PTY:
+   ```bash
+   # Option A: Use screen (interactive)
+   screen /dev/pts/X 115200
+   # Type characters - you'll see "You pressed: X" for each
+   # Exit: Ctrl+A then K, confirm Y
+
+   # Option B: Send characters directly
+   echo "hello" > /dev/pts/X
+   # Check Terminal 1 for "You pressed: h", "You pressed: e", etc.
+   ```
+
+**Note:** Replace `/dev/pts/X` with the actual PTY device shown when the simulator starts.
+
+**Note:** native_sim has built-in GPIO emulator and LED support defined in `zephyr/boards/native/native_sim/native_sim.dts` - no additional board configuration files needed.
 
 ## Usage
 
