@@ -166,6 +166,45 @@ The native_sim build includes GPIO tracing that shows LED state changes:
 
 This is implemented via Zephyr's tracing subsystem in `src/trace_hooks.c`, which hooks into GPIO operations without modifying `main.c`. The `gpio_emul_output_get()` API reads the actual GPIO state from the emulator. Enabled by `boards/native_sim.conf` with `CONFIG_TRACING_GPIO=y`.
 
+**GDB Debugging (main.c):**
+
+Since native_sim compiles to a native Linux executable, you can debug `main.c` directly with GDB:
+
+1. **Build with no optimizations** (so variables aren't optimized out):
+   ```bash
+   west build -b native_sim . --pristine -- -DCONFIG_NO_OPTIMIZATIONS=y
+   ```
+
+2. **Run GDB interactively:**
+   ```bash
+   gdb ./build/zephyr/zephyr.exe
+   ```
+
+3. **Example GDB session** (inspecting `main.c` variables):
+   ```gdb
+   (gdb) break /full/path/to/src/main.c:21    # Break at gpio_pin_configure_dt
+   (gdb) run
+   (gdb) print led                             # Inspect LED gpio_dt_spec
+   (gdb) print led.port->name                  # Shows "gpio_emul"
+   (gdb) print led.pin                         # Shows pin number (0)
+   (gdb) backtrace                             # Show call stack
+   (gdb) continue
+   (gdb) quit
+   ```
+
+   **Important:** Use the full absolute path to `main.c` when setting breakpoints, otherwise GDB may hit the wrong `main.c` (from native_simulator).
+
+4. **Batch mode with timeout** (for scripted testing):
+   ```bash
+   timeout 10 gdb -q -batch \
+     -ex "break /full/path/to/src/main.c:21" \
+     -ex "run" \
+     -ex "print led" \
+     -ex "print led.port->name" \
+     -ex "quit" \
+     ./build/zephyr/zephyr.exe
+   ```
+
 ## Usage
 
 Connect via serial terminal (115200 baud) to see:
