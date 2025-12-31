@@ -19,7 +19,6 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "Build native_sim (debug)",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]

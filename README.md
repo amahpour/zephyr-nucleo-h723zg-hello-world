@@ -207,10 +207,11 @@ Since native_sim compiles to a native Linux executable, you can debug `main.c` d
 
 5. **VS Code Debugging:**
    
-   The `.vscode/launch.json` and `.vscode/tasks.json` files are pre-configured for debugging:
-   - Press `F5` to build (with debug symbols) and launch the debugger
-   - Set breakpoints in `src/main.c` or `src/trace_hooks.c` by clicking the gutter
-   - Use the Debug panel to inspect variables like `led` and `state`
+   Build first, then debug:
+   ```bash
+   west build -b native_sim . --pristine -- -DCONFIG_NO_OPTIMIZATIONS=y
+   ```
+   Then press `F5` to launch the debugger. Set breakpoints on line 33 (`k_msleep`) and watch `led_state` toggle 0 ↔ 1.
    
    **Requires:** [C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) for VS Code.
 
