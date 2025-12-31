@@ -4,3 +4,8 @@ project(hello_world)
 
 target_sources(app PRIVATE src/main.c)
 
+# Add GPIO tracing hooks when tracing is enabled
+if(CONFIG_TRACING_GPIO AND CONFIG_TRACING_USER)
+    target_sources(app PRIVATE src/trace_hooks.c)
+endif()
+
