@@ -124,6 +124,11 @@ west build -t run
 ```
 uart connected to pseudotty: /dev/pts/X
 *** Booting Zephyr OS build vX.X.X ***
+[DEBUG] (GPIO) pin 0 configured (ret=0)
+[DEBUG] (GPIO) LED state: ON
+[DEBUG] (GPIO) LED state: OFF
+[DEBUG] (GPIO) LED state: ON
+...
 ```
 
 **Testing UART Echo via PTY:**
@@ -150,7 +155,12 @@ The native simulator creates a pseudotty (PTY) for UART communication. To test:
 
 **Note:** Replace `/dev/pts/X` with the actual PTY device shown when the simulator starts.
 
-**Note:** native_sim has built-in GPIO emulator and LED support defined in `zephyr/boards/native/native_sim/native_sim.dts` - no additional board configuration files needed.
+**Note:** native_sim has built-in GPIO emulator and LED support defined in `zephyr/boards/native/native_sim/native_sim.dts` - no additional overlay file needed.
+
+**Files added for native_sim support:**
+- `boards/native_sim.conf` - Enables GPIO tracing (`CONFIG_TRACING_GPIO=y`)
+- `src/trace_hooks.c` - Implements trace hooks to print LED state changes
+- `.vscode/launch.json` - VS Code debug configuration
 
 **GPIO Debug Output:**
 
@@ -182,13 +192,13 @@ Since native_sim compiles to a native Linux executable, you can debug `main.c` d
 
 3. **Example GDB session** (inspecting `main.c` variables):
    ```gdb
-   (gdb) break /full/path/to/src/main.c:21    # Break at gpio_pin_configure_dt
+   (gdb) break /full/path/to/src/main.c:33    # Break at k_msleep (after led_state is set)
    (gdb) run
+   (gdb) print led_state                       # Shows 0 or 1 (OFF or ON)
    (gdb) print led                             # Inspect LED gpio_dt_spec
    (gdb) print led.port->name                  # Shows "gpio_emul"
-   (gdb) print led.pin                         # Shows pin number (0)
-   (gdb) backtrace                             # Show call stack
-   (gdb) continue
+   (gdb) continue                              # led_state will toggle
+   (gdb) print led_state                       # Now shows opposite value
    (gdb) quit
    ```
 
@@ -197,13 +207,16 @@ Since native_sim compiles to a native Linux executable, you can debug `main.c` d
 4. **Batch mode with timeout** (for scripted testing):
    ```bash
    timeout 10 gdb -q -batch \
-     -ex "break /full/path/to/src/main.c:21" \
+     -ex "break /full/path/to/src/main.c:33" \
      -ex "run" \
-     -ex "print led" \
-     -ex "print led.port->name" \
+     -ex "print led_state" \
+     -ex "continue" \
+     -ex "print led_state" \
      -ex "quit" \
      ./build/zephyr/zephyr.exe
    ```
+   
+   Expected output shows `led_state` toggling between 0 and 1.
 
 5. **VS Code Debugging:**
    
