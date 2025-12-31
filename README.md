@@ -152,6 +152,20 @@ The native simulator creates a pseudotty (PTY) for UART communication. To test:
 
 **Note:** native_sim has built-in GPIO emulator and LED support defined in `zephyr/boards/native/native_sim/native_sim.dts` - no additional board configuration files needed.
 
+**GPIO Debug Output:**
+
+The native_sim build includes GPIO tracing that shows LED state changes:
+
+```
+[DEBUG] (GPIO) pin 0 configured (ret=0)
+[DEBUG] (GPIO) LED state: OFF
+[DEBUG] (GPIO) LED state: ON
+[DEBUG] (GPIO) LED state: OFF
+...
+```
+
+This is implemented via Zephyr's tracing subsystem in `src/trace_hooks.c`, which hooks into GPIO operations without modifying `main.c`. The `gpio_emul_output_get()` API reads the actual GPIO state from the emulator. Enabled by `boards/native_sim.conf` with `CONFIG_TRACING_GPIO=y`.
+
 ## Usage
 
 Connect via serial terminal (115200 baud) to see:
